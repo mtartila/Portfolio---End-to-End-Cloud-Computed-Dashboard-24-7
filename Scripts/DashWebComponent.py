@@ -1,3 +1,4 @@
+import os
 import dash
 from dash import dcc, html
 import dash.dependencies as dd
@@ -8,12 +9,12 @@ from sqlalchemy import create_engine
 # Initialize the Dash app
 app = dash.Dash()
 
-# Replace with your actual credentials and specify the port
-username = 'avnadmin'
-password = 'AVNS_xCxZRTAn3zfvRAwFs1E'
-host = 'mysql-tartilaportfolio-mtartila-project-portfolio.g.aivencloud.com'
-port = '13624'
-database = 'defaultdb'
+# Fetch database credentials from environment variables
+username = os.getenv('DB_USERNAME')
+password = os.getenv('DB_PASSWORD')
+host = os.getenv('DB_HOST')
+port = os.getenv('DB_PORT')
+database = os.getenv('DB_NAME')
 
 # Create the engine using pymysql
 engine = create_engine(f'mysql+pymysql://{username}:{password}@{host}:{port}/{database}')
