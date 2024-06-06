@@ -7,7 +7,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 # Initialize the Dash app
-app = dash.Dash()
+app = dash.Dash(__name__)
 
 # Fetch database credentials from environment variables
 username = os.getenv('DB_USERNAME')
@@ -57,6 +57,9 @@ def update_graph(n):
     fig = px.line(df, x=df.index, y='close', color='symbol', title='Stock Prices Over Time', markers=True)
     return fig
 
-# Run the Dash app
+# For local development, run the Dash app
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+# Ensure the server is accessible to Gunicorn
+server = app.server
