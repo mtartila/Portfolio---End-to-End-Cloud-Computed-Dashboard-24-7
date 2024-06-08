@@ -8,7 +8,7 @@ API_KEY = ' '
 SYMBOLS = ['MSFT', 'AAPL', 'AMZN', 'GOOGL']  # List of stock symbols
 
 # MySQL database details
-host = 'mysql-tartilaportfolio-mtartila-project-portfolio.g.aivencloud.com'
+host = ''
 database = ''
 user = ''
 password = ''
