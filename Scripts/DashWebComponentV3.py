@@ -37,7 +37,7 @@ initial_symbol = 'MSFT'
 initial_symbol_2 = 'MSFT'
 filtered_df = df[df['symbol'] == initial_symbol]
 filtered_df_daily = df_daily[df_daily['symbol'] == initial_symbol_2]
-newnames = {'daily_avg_open':'Open', 'daily_avg_high': 'High', 'daily_avg_low' : 'Low','daily_avg_close':'Close'}
+newnames = {'daily_avg_close':'Close','sarimax_prediction':'Prediction Score (SARIMAX)'}
 
 fig = px.line(filtered_df, x=filtered_df.index, y='close', title='Stock Prices Over Time', markers=True)
 fig.update_traces(connectgaps=False)
