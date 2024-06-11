@@ -49,7 +49,7 @@ fig.update_layout(
     legend_title_font=dict(color='white')
 )
 
-fig2 = px.line(filtered_df_daily, x=filtered_df_daily.index, y=['daily_avg_open','daily_avg_high','daily_avg_low','daily_avg_close'], title=f'Daily Stock Price: {initial_symbol_2}', markers=True)
+fig2 = px.line(filtered_df_daily, x=filtered_df_daily.index, y=['daily_avg_close','sarimax_prediction'], title=f'Daily Stock Price Prediction: {initial_symbol_2}', markers=True)
 fig2.update_traces(connectgaps=False)
 fig2.for_each_trace(lambda t: t.update(name=newnames[t.name],
                                        legendgroup=newnames[t.name],
@@ -156,7 +156,7 @@ def update_figure(selected_symbol, start, end, symbol2, n_intervals):
         legend_title_font=dict(color='white')
     )
     
-    fig2 = px.line(filtered_df_daily, x=filtered_df_daily.index, y=['daily_avg_open', 'daily_avg_high', 'daily_avg_low', 'daily_avg_close'], title=f'Daily Stock Price: {symbol2}', markers=True)
+    fig2 = px.line(filtered_df_daily, x=filtered_df_daily.index, y=['daily_avg_close','sarimax_prediction'], title=f'Daily Stock Price: {symbol2}', markers=True)
     fig2.update_traces(connectgaps=False)
     fig2.for_each_trace(lambda t: t.update(name=newnames[t.name],
                                            legendgroup=newnames[t.name],
