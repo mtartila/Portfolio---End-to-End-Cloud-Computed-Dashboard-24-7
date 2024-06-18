@@ -4,18 +4,18 @@ import mysql.connector
 import datetime
 import pytz
 
-# Load the SARIMAX model
+# Loading the SARIMAX model
 model_MSFT = joblib.load('sarimax_model_MSFT.pkl')
 model_AAPL = joblib.load('sarimax_model_AAPL.pkl')
 model_AMZN = joblib.load('sarimax_model_AMZN.pkl')
 model_GOOGL = joblib.load('sarimax_model_GOOGL.pkl')
 
 # MySQL database details
-host = ''
-database = ''
-user = ''
-password = ''
-port =   # Custom port for Aiven MySQL
+host = 'mysql-tartilaportfolio-mtartila-project-portfolio.g.aivencloud.com'
+database = 'defaultdb'
+user = 'avnadmin'
+password = 'AVNS_xCxZRTAn3zfvRAwFs1E'
+port =  13624 # Custom port for Aiven MySQL
 
 def fetch_data():
     # Connect to the database
@@ -42,6 +42,12 @@ for x in symbols:
 
 df = pd.concat([df_AAPL, df_MSFT, df_AMZN, df_GOOGL], axis=1)
 
+
+df = df.asfreq('B')  
+df.fillna(method='ffill', inplace=True)
+
+
+
 exog_MSFT = df[['close_AAPL', 'close_AMZN', 'close_GOOGL']].tail(1)
 endog_MSFT = df[['close_MSFT']].tail(1)
 
@@ -66,7 +72,7 @@ for x in symbols:
     globals()[f'forecast_values_{x}'] = globals()[f'model_{x}'].forecast(steps=forecast_steps, exog=globals()[f'exog_{x}'])
     
 for x in symbols:
-    globals()[f'df_forecast_{x}'] = pd.DataFrame(globals()[f'forecast_values_{x}'])
+    globals()[f'df_forecast_{x}'] = pd.DataFrame(globals()[f'forecast_values_{x}']).set_axis(['predicted_mean'], axis=1)
 
 inserted_date = datetime.datetime.now()
 
