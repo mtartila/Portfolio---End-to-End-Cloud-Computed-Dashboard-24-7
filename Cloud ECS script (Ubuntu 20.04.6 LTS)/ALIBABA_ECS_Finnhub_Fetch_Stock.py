@@ -5,14 +5,14 @@ import datetime
 
 # Finnhub API details
 API_KEY = ' '
-SYMBOLS = ['MSFT', 'AAPL', 'AMZN', 'GOOGL']  # List of stock symbols
+SYMBOLS = ['MSFT', 'AAPL', 'AMZN', 'GOOGL']  # Listing stock symbols used
 
-# MySQL database details
+#AIVEN Database Detail
 host = ''
 database = ''
 user = ''
 password = ''
-port = ''  # Custom port for Aiven MySQL
+port = ''  
 
 try:
     connection = mysql.connector.connect(
@@ -20,13 +20,13 @@ try:
         database=database,
         user=user,
         password=password,
-        port=port  # Specify the custom port here
+        port=port  
     )
 
     if connection.is_connected():
         cursor = connection.cursor()
 
-        # Create table if it doesn't exist
+        # Create table incase it doesnt exist yet
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS finnhub_stock_data (
             symbol VARCHAR(10),
@@ -40,7 +40,8 @@ try:
             PRIMARY KEY (symbol, record_date)
         )
         """)
-
+        
+        #Looping through every symbols to fetch its own prices
         for symbol in SYMBOLS:
             URL = f'https://finnhub.io/api/v1/quote?symbol={symbol}&token={API_KEY}'
             response = requests.get(URL)
@@ -58,9 +59,12 @@ try:
                 previous_close = data.get('pc', 0)
                 inserted_date = datetime.datetime.now()
 
-                # Debug: Print the data to be inserted
+                # Debugging to troubleshoot each stock symbols
                 print(f"Inserting data for {symbol} at {current_time}: open={open_price}, high={high_price}, low={low_price}, close={close_price}, previous_close={previous_close}, inserted_date={inserted_date}")
 
+
+                # Insert fetched data into AIVEN DB
+                # ON DUPLICATE means inserting updated data by overwriting previous data
                 try:
                     cursor.execute("""
                     INSERT INTO finnhub_stock_data (symbol, record_date, open, high, low, close, previous_close, inserted_date)
@@ -85,4 +89,4 @@ finally:
     if connection.is_connected():
         cursor.close()
         connection.close()
-        print("MySQL connection is closed")
+        print("AIVEN connection closed")

@@ -10,15 +10,15 @@ model_AAPL = joblib.load('sarimax_model_AAPL.pkl')
 model_AMZN = joblib.load('sarimax_model_AMZN.pkl')
 model_GOOGL = joblib.load('sarimax_model_GOOGL.pkl')
 
-# MySQL database details
-host = 'mysql-tartilaportfolio-mtartila-project-portfolio.g.aivencloud.com'
-database = 'defaultdb'
-user = 'avnadmin'
-password = 'AVNS_xCxZRTAn3zfvRAwFs1E'
-port =  13624 # Custom port for Aiven MySQL
+#AIVEN DB
+host = ''
+database = ''
+user = ''
+password = ''
+port =  
 
 def fetch_data():
-    # Connect to the database
+    
     connection = mysql.connector.connect(
         host=host,
         user=user,
@@ -47,7 +47,7 @@ df = df.asfreq('B')
 df.fillna(method='ffill', inplace=True)
 
 
-
+#stating exogenous and endogenous data for enriching model data
 exog_MSFT = df[['close_AAPL', 'close_AMZN', 'close_GOOGL']].tail(1)
 endog_MSFT = df[['close_MSFT']].tail(1)
 
@@ -66,7 +66,7 @@ for x in symbols:
     except Exception as e:
         print(f"Error appending endogenous data, no new record_date at {x}")
 
-# Make predictions
+#Prediction scoring
 forecast_steps = 1
 for x in symbols:
     globals()[f'forecast_values_{x}'] = globals()[f'model_{x}'].forecast(steps=forecast_steps, exog=globals()[f'exog_{x}'])
@@ -102,13 +102,13 @@ try:
     )
     """)
 
-    # Ensure sarimax_prediction column is emptied before inserting new values
+    # Ensure sarimax_prediction column is emptied before inserting latest prediction
     cursor.execute("""
     UPDATE finnhub_stock_data_daily
     SET sarimax_prediction = NULL
     """)
 
-    # Insert SARIMAX predictions
+    # Insert latest SARIMAX predictions
     for x in symbols:
         for record_date, row in globals()[f'df_forecast_{x}'].iterrows():
             cursor.execute("""

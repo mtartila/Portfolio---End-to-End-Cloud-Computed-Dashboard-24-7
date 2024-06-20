@@ -4,7 +4,7 @@ import mysql.connector
 import datetime
 import logging
 
-# Set up logging
+# Set up logging to ensure troubleshoot since scoring script have higher rate of errors
 logging.basicConfig(level=logging.DEBUG, filename='script.log', 
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -18,16 +18,16 @@ try:
 except Exception as e:
     logging.error(f"Error loading models: {e}")
 
-# MySQL database details
+#AIVEN DB 
 host = ''
 database = ''
 user = ''
 password = ''
-port =   # Custom port for Aiven MySQL
+port =   
 
 def fetch_data():
     try:
-        # Connect to the database
+        
         connection = mysql.connector.connect(
             host=host,
             user=user,
@@ -124,13 +124,13 @@ if df is not None:
             )
             """)
 
-            # Ensure sarimax_prediction column is emptied before inserting new values
+            # Ensure sarimax_prediction column is emptied before inserting new prediction values
             cursor.execute("""
             UPDATE finnhub_stock_data_daily
             SET sarimax_prediction = NULL
             """)
 
-            # Insert SARIMAX predictions
+            # Insert latest SARIMAX predictions
             for x in symbols:
                 for record_date, row in globals()[f'df_forecast_{x}'].iterrows():
                     cursor.execute("""
