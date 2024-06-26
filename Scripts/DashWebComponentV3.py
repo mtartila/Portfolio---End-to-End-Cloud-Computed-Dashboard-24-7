@@ -29,8 +29,14 @@ def fetch_data(query):
     return df
 
 # Fetch initial data
-df = fetch_data('SELECT * FROM finnhub_stock_data')
-df_daily = fetch_data('SELECT * FROM finnhub_stock_data_daily')
+df = fetch_data('''SELECT *
+                    FROM finnhub_stock_data
+                    WHERE record_date >= NOW() - INTERVAL 14 DAY;
+                    ''')
+df_daily = fetch_data('''SELECT *
+                        FROM finnhub_stock_data_daily
+                        WHERE record_date >= NOW() - INTERVAL 20 DAY;
+                        ''')
 
 # Create the initial figure
 initial_symbol = 'MSFT'
